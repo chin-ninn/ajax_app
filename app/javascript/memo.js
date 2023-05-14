@@ -16,7 +16,7 @@ function post () {    // postという関数宣言
     XHR.open("POST", "/posts", true);
         // リクエストの内容を非同期trueで、リクエスト先/postに、保存POSTする
     XHR.responseType = "json";
-        // レスポンスのフォーマットをJSON型にする
+        // レスポンスのフォーマットをJSON形式にする
     XHR.send(formData);
         // 定数formDataに格納された内容をサーバー側に送信する
   });

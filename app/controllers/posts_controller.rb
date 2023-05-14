@@ -8,7 +8,9 @@ class PostsController < ApplicationController
   # end
 
   def create
-    Post.create(content: params[:content])
-    redirect_to action: :index    # contentを保存したら、indexアクションにリダイレクトする
+    post = Post.create(content: params[:content])
+        # 新しく投稿されたcontentをパラメーターの値として保存し、変数postに格納
+    render json:{ post: post }
+        # 変数postの値を、キーpost:を一緒に、JSON形式で、JavaScriptに送信する
   end
 end
