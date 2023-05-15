@@ -1,3 +1,19 @@
+const buildHTML = (XHR) => {    // XHRを引数とした、定数buildHTMLを定義
+  const item = XHR.response.post;
+      // レスポンスの中からpostという投稿されたメモの情報を抽出して、定数itemに格納
+      // createアクションにrender文（postキーと投稿されたメモ内容が紐づけ）があるから。
+  const html = `      
+    <div class="post">
+      <div class="post-date">
+        投稿日時：${item.created_at}
+      </div>
+      <div class="post-content">
+        ${item.content}
+      </div>
+    </div>`;    // 定数itemの情報をもとにHTMLを記述して、それを定数htmlに格納
+  return html;    // 定数htmlの返り値はココ。新たに生成したHTML（定数htmlに記述している情報）を持ったhtml。
+  };
+
 function post () {    // postという関数宣言
 
   // 送信ボタンを押すと、フォーム内容を取得して、ブラウザに表示する
@@ -6,7 +22,8 @@ function post () {    // postという関数宣言
   submit.addEventListener("click", (e) => {
       // 定数submitがaddEventListenerで指定したイベント、クリックされると以下のイベントが起こる
     e.preventDefault();
-        // 「投稿ボタンをクリックした」という情報を持ったeを無効化し、クリックした直後にブラウザからリクエストが送信されるの防ぐ
+        // 「投稿ボタンをクリックした」という情報を持ったeを無効化し、
+        // クリックした直後にブラウザからリクエストが送信されるの防ぐ
     const form = document.getElementById("form");
         // getElementByIdで取得したidの要素<%= form_with %>を、定数formに格納
     const formData = new FormData(form);
@@ -19,6 +36,22 @@ function post () {    // postという関数宣言
         // レスポンスのフォーマットをJSON形式にする
     XHR.send(formData);
         // 定数formDataに格納された内容をサーバー側に送信する
+    XHR.onload = () => {
+        // リクエストの送信が成功したときに呼び出されるプロパティ、以下がその内容
+      if (XHR.status != 200) {
+        alert(`Error ${XHR.status}: ${XHR.statusText}`)
+        return null;
+      }
+          // HTTPステータスが200じゃなかったらエラーメッセージがアラートで表示され、この行以降の処理を行わない
+      const list = document.getElementById("list");
+          // 取得したidの要素<div id="list">を、定数listに格納
+      const formText = document.getElementById("content");
+          // id="content"の要素<%= form.text_field %>を定数formTextに格納し、（1）
+      list.insertAdjacentHTML("afterend", buildHTML(XHR));
+          // 引数がXHRの定数buildHTMLを、定数listの直後に挿入する
+      formText.value = "";
+          // （1）定数formTextのvalue属性に空の文字列を入れて、フォームの中身をリセットしている
+    };
   });
 };
 
